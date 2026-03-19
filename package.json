@@ -1,7 +1,7 @@
 {
-  "name": "regalia-banquet-backend",
+  "name": "tulsi-banquet-backend",
   "version": "1.0.0",
-  "description": "Backend API for Regalia Banquet",
+  "description": "Backend API for Tulsi Banquet",
   "main": "src/Server.js",
   "scripts": {
     "start": "node src/Server.js",
