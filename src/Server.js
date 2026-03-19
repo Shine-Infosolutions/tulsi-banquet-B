@@ -10,6 +10,8 @@ app.use(cors({
   origin: [
     "http://localhost:4000",
     "http://localhost:5173",
+    "https://tulsi-banquet-b.vercel.app",
+    "https://tullsi-banquet-f.vercel.app",
     
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
