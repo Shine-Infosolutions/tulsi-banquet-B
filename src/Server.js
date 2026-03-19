@@ -45,7 +45,7 @@ const menuItemRoutes = require('./Route/planLimitRoutes/menuItemRoutes');
 
 // Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Regalia Banquet Backend API' });
+  res.json({ message: 'Tulsi Banquet Backend API' });
 });
 
 // Test endpoint
