@@ -5,9 +5,15 @@ const bookingSchema = new mongoose.Schema({
   email: { type: String,  trim: true },
   number: { type: String,  trim: true },
   whatsapp: { type: String,  trim: true },
-  pax: { type: Number, },
-  startDate: { type: Date, },
- gst:{type:Number},
+  pax: { type: Number },
+  vegPax: { type: Number, default: 0 },
+  nonVegPax: { type: Number, default: 0 },
+  vegRate: { type: Number, default: 0 },
+  nonVegRate: { type: Number, default: 0 },
+  startDate: { type: Date },
+  gst: { type: Number },
+  useCustomPrice: { type: Boolean, default: false },
+  customPlatePrice: { type: Number, default: 0 },
 
   ratePlan: { type: String, },
   advance: [

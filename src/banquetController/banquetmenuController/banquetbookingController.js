@@ -23,7 +23,9 @@ exports.createBooking = async (req, res) => {
 
     // Convert numeric fields safely
     const numericFields = [
-      'pax', 'total', 'balance', 'ratePerPax', 'discount', 'gst',
+      'pax', 'vegPax', 'nonVegPax', 'vegRate', 'nonVegRate',
+      'total', 'balance', 'ratePerPax', 'discount', 'gst',
+      'customPlatePrice', 'decorationCharge', 'musicCharge',
       'extraRooms', 'roomPricePerUnit', 'extraRoomTotalPrice',
       'complimentaryRooms', 'staffEditCount'
     ];
@@ -101,8 +103,14 @@ exports.getBookingById = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    // Fetch the associated menu
-    const menu = await Menu.findOne({ bookingRef: req.params.id });
+    // Fetch the associated menu — match by ObjectId or string
+    const menu = await Menu.findOne({
+      $or: [
+        { bookingRef: booking._id },
+        { bookingRef: req.params.id },
+        { customerRef: booking.customerRef }
+      ]
+    });
 
     // Debug log
     console.log("Booking:", booking);
@@ -199,14 +207,21 @@ exports.updateBooking = async (req, res) => {
 
     // 5️⃣ Assign other fields including mealPlan
     const ignoredFields = ["advance", "total"];
+    const numericUpdateFields = [
+      'pax', 'vegPax', 'nonVegPax', 'vegRate', 'nonVegRate',
+      'balance', 'ratePerPax', 'discount', 'gst', 'customPlatePrice',
+      'decorationCharge', 'musicCharge', 'extraRooms', 'roomPricePerUnit',
+      'extraRoomTotalPrice', 'complimentaryRooms', 'staffEditCount'
+    ];
     Object.keys(updatedData).forEach(key => {
       if (!ignoredFields.includes(key)) {
-        // ✅ Special handling for mealPlan to validate enum
         if (key === "mealPlan") {
           const validOptions = ["With Breakfast", "Without Breakfast"];
           booking.mealPlan = validOptions.includes(updatedData.mealPlan)
             ? updatedData.mealPlan
-            : "Without Breakfast"; // default
+            : "Without Breakfast";
+        } else if (numericUpdateFields.includes(key)) {
+          booking[key] = updatedData[key] !== undefined && updatedData[key] !== '' ? Number(updatedData[key]) : 0;
         } else {
           booking[key] = updatedData[key];
         }
@@ -228,7 +243,12 @@ exports.updateBooking = async (req, res) => {
 
     // 8️⃣ MENU UPDATE LOGIC
     if (updatedData.categorizedMenu && booking.customerRef) {
-      let menu = await Menu.findOne({ bookingRef: booking._id });
+      let menu = await Menu.findOne({
+        $or: [
+          { bookingRef: booking._id },
+          { customerRef: booking.customerRef }
+        ]
+      });
       if (menu) {
         menu.categories = updatedData.categorizedMenu;
         menu.customerRef = booking.customerRef;

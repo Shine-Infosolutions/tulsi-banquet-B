@@ -30,22 +30,20 @@ exports.getPlanLimit = async (req, res) => {
 // Create or update plan limit
 exports.upsertPlanLimit = async (req, res) => {
   try {
-    const { ratePlan, foodType, limits } = req.body;
+    const { ratePlan, foodType, limits, price } = req.body;
     const { id } = req.params;
     
     let planLimit;
     if (id) {
-      // Update by ID
       planLimit = await PlanLimit.findByIdAndUpdate(
         id,
-        { ratePlan, foodType, limits },
+        { ratePlan, foodType, limits, price },
         { new: true }
       );
     } else {
-      // Upsert by ratePlan and foodType
       planLimit = await PlanLimit.findOneAndUpdate(
         { ratePlan, foodType },
-        { ratePlan, foodType, limits },
+        { ratePlan, foodType, limits, price },
         { new: true, upsert: true }
       );
     }

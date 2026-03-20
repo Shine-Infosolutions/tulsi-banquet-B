@@ -14,6 +14,10 @@ const planLimitSchema = new mongoose.Schema({
   limits: {
     type: mongoose.Schema.Types.Mixed,
     default: {}
+  },
+  price: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true
